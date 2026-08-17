@@ -1,2 +1,6 @@
 mcp
 pytest
+requests
+ddgs
+python-dotenv
+typing_extensions

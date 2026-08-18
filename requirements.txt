@@ -4,3 +4,5 @@ requests
 ddgs
 python-dotenv
 typing_extensions
+scrapling[fetchers]
+trafilatura

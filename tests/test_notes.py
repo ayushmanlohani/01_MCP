@@ -38,11 +38,14 @@ class FakeCollection:
         return [copy.deepcopy(doc) for doc in self.docs if self._matches(doc, query)]
 
     def distinct(self, field):
+        # Real MongoDB quirk: distinct on an array field contributes None for
+        # any document where that array is empty, instead of contributing
+        # nothing. Replicated here since it broke create_note's hint logic.
         values = set()
         for doc in self.docs:
             value = doc.get(field)
             if isinstance(value, list):
-                values.update(value)
+                values.update(value or [None])
             elif value is not None:
                 values.add(value)
         return list(values)
@@ -117,6 +120,14 @@ def test_create_note_with_no_tags_hints_at_existing_tags():
     assert response["note"]["name"] == "Todo"
     assert response["note"]["tags"] == []
     assert response["hint"] == "Existing tags you could reuse: shopping"
+
+
+def test_create_note_hint_ignores_notes_with_no_tags():
+    create_note("Todo", ["walk dog"])  # no tags -> tags: []
+
+    response = create_note("Groceries", ["milk"])
+
+    assert response["hint"] is None
 
 
 def test_create_note_with_tags_gets_no_hint():

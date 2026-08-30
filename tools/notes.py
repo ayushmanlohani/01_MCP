@@ -123,7 +123,7 @@ def create_note(
 
     hint = None
     if not tags_lower:
-        existing_tags = sorted(collection.distinct("tags"))
+        existing_tags = sorted(t for t in collection.distinct("tags") if t)
         if existing_tags:
             hint = f"Existing tags you could reuse: {', '.join(existing_tags)}"
 

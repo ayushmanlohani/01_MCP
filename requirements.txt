@@ -6,3 +6,4 @@ python-dotenv
 typing_extensions
 scrapling[fetchers]
 trafilatura
+pymongo
